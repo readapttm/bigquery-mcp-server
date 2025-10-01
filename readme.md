@@ -1,6 +1,6 @@
 # Minimal MCP server for interacting with a BigQuery SQL database
 
-This MCP server enables an LLM such as Claude (via the desktop app) to list datasets, tables within a dataset and run read only queries against a BigQuery database. Claude can write simple queries (such as returning the first 5 rows of a table) based on natural language requests. More compelx queries may require additional context about the database to be supplied to the model. 
+This MCP server enables an LLM such as Claude (via the desktop app) to list datasets, tables within a dataset, retrieve a table schema and run read only queries against a BigQuery database. Claude can write simple queries (such as returning the first 5 rows of a table) based on natural language requests. More complex queries may require additional context about the database to be supplied to the model. 
 
 ## Authentication
 To use this server, you must supply a bigquery project id via the .env file and authenticate to GCP. The simplest method to connect with GCP is via Application Default Credentials. This can be set up in a terminal by installing the gcloud CLI and running the following in a terminal (replacing YOUR_PROJECT_ID and youremail@domain as required, using the email address linked to your GCP account). 
@@ -50,7 +50,7 @@ Ensure you replace "path/to/python.exe" with the path to a python installation t
 
 ```python -m venv .venv```
 
-To make the MCP available to Claude Desktop, restart the application after updating claude_desktop_config.json. You should see it available as a Local MCP server by navigating to Settings (accesible by clicking on your profile name in the bottom left corner) -> Developer. You should then be able to ask Claude questions about your database. The permissions granted above do not afford Claude the ability to delete any data.
+To make the MCP available to Claude Desktop, restart the application after updating claude_desktop_config.json. You should see it available as a Local MCP server by navigating to Settings (accesible by clicking on your profile name in the bottom left corner) -> Developer. You should then be able to ask Claude questions about your database. The permissions granted above do not grant the ability to delete any data; but caution is advised when using this MCP to avoid any inadvertent data loss.
 
 You can test each MCP function in turn using the Inspector tool by running (requires npx installation):
 
@@ -61,6 +61,7 @@ You can test each MCP function in turn using the Inspector tool by running (requ
 - Give me the names all available datasets.
 - What tables are contained in {dataset name}?
 - How many rows are in {table_name}?
+- What columns are in  {dataset name}.{table_name}?
 - Show me the first five rows of {table_name}
 
 

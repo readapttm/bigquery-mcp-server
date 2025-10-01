@@ -4,10 +4,8 @@ from mcp.server import NotificationOptions, Server
 import mcp.server.stdio
 
 from google.cloud import bigquery
-from google.oauth2 import service_account
 from typing import Any
 import os
-import json
 from dotenv import load_dotenv
 
 
@@ -39,6 +37,13 @@ class BigQueryDatabase:
         print(f'Found {len(table_ids)} tables.')
 
         return table_ids
+
+    def get_table_schema(self, dataset_id: str, table_id: str) -> list[str]:
+        """Get the schema for a table in a BigQuery dataset"""
+        
+        table = self.client.get_table(f'{dataset_id}.{table_id}')  
+
+        return table.schema
     
 
     def query_db(self, sql_query: str) -> list[dict]:
@@ -92,6 +97,18 @@ async def handle_list_tools() -> list[types.Tool]:
             },
         ),
         types.Tool(
+            name="get-table-schema",
+            description="Get the schema for a table in a BigQuery dataset",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "dataset_id": {"type": "string", "description": "dataset_id to specify which tables to return"},
+                    "table_id": {"type": "string", "description": "table_id to specify which table schema to return"},
+                },
+                "required": ["dataset_id", "table_id"],
+            },
+        ),
+        types.Tool(
             name="query-db",
             description="Run a SQL query against the database",
             inputSchema={
@@ -119,6 +136,12 @@ async def handle_call_tool(
             if not arguments or "dataset_id" not in arguments:
                 raise ValueError("Missing dataset_id argument")
             results = db.list_table_ids(arguments["dataset_id"])
+            return [types.TextContent(type="text", text=str(results))]
+        
+        if name == "get-table-schema":
+            if not arguments or "dataset_id" not in arguments or "table_id" not in arguments:
+                raise ValueError("Missing dataset_id and/or table_id arguments")
+            results = db.get_table_schema(arguments["dataset_id"], arguments["table_id"])
             return [types.TextContent(type="text", text=str(results))]
         
         if name == "query-db":
