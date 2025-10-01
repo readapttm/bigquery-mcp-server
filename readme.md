@@ -1,6 +1,6 @@
 # Minimal MCP server for interacting with a BigQuery SQL database
 
-The server is defined in the file bq_mcp_server.py
+This MCP server enables an LLM such as Claude (via the desktop app) to list datasets, tables within a dataset and run read only queries against a BigQuery database.
 
 ## Authentication
 To use this server, you must supply a bigquery project id via the .env file and authenticate to GCP. The simplest method to connect with GCP is via Application Default Credentials. This can be set up in a terminal by installing the gcloud CLI and running the following in a terminal (replacing YOUR_PROJECT_ID and youremail@domain as required, using the email address linked to your GCP account). 
